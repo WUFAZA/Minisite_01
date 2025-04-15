@@ -19,9 +19,9 @@ export default function Home() {
       <Spacer />
       <FadeIn.Item>
         <p>
-          minisite is a  Portfolio template that you can use to create your own portfolio website. It is designed to be minimal, lightweight, and fast. It is
-          also highly customizable, so you can easily make it your own. minisite is perfect for developers, designers, and other creatives who want to showcase
-          their work. To start using minisite, you can follow the guides below.
+        minisite offers a sleek portfolio solution for creating your personal showcase website. 
+        Built for speed and simplicity, this lightweight template remains fully adaptable to match your unique style. Ideal for creative professionals including developers seeking to display their projects. 
+        Get started by exploring the site and forking the repository.  
         </p>
       </FadeIn.Item>
       <FadeIn.Item>
