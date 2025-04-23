@@ -11,8 +11,8 @@ export default function Home() {
       <FadeIn.Item>
         <div className="flex justify-between">
           <div>
-            <h1>minisite</h1>
-            <h2>Minimalist developer Portfolio template</h2>
+            <h1>Minisite</h1>
+            <h2>Minimalist Portfolio template</h2>
           </div>
         </div>
       </FadeIn.Item>
@@ -25,13 +25,13 @@ export default function Home() {
           </p>
           <div className="flex gap-4">
             <Link href="/guides/getting-started" text="Get Started" underline />
-            <Link href="https://github.com/raphaelsalaja/minisite" text="View on GitHub" underline />
+            <Link href="https://github.com/OmniS0FT/Minisite" text="View on GitHub" underline />
           </div>
         </div>
       </FadeIn.Item>
       <FadeIn.Item>
         <p>
-        minisite offers a sleek portfolio solution for creating your personal showcase website. 
+        Minisite offers a sleek portfolio solution for creating your personal showcase website. 
         Built for speed and simplicity, this lightweight template remains fully adaptable to match your unique style. Ideal for creative professionals including developers seeking to display their projects. 
         Get started by exploring the site and forking the repository.  
         </p>
