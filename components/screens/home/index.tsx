@@ -42,12 +42,12 @@ I'm driven by a passion for tech and love to find solutions to problems through 
       <FadeIn.Item>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6 mb-6">
           <div className="border border-border rounded-lg p-4">
-            <h3 className="font-medium mb-2">Markdown & MDX</h3>
-            <p className="text-small text-muted">Write content using Markdown or MDX with full flexibility.</p>
+            <h3 className="font-medium mb-2">Machine Learning</h3>
+            <p className="text-small text-muted">Autonomous tasks and data</p>
           </div>
           <div className="border border-border rounded-lg p-4">
-            <h3 className="font-medium mb-2">SEO Optimized</h3>
-            <p className="text-small text-muted">Built-in SEO support with dynamic meta tags and Open Graph images.</p>
+            <h3 className="font-medium mb-2">Cloud Engineering</h3>
+            <p className="text-small text-muted">creating & troubleshooting cloud infrastructure</p>
           </div>
         </div>
       </FadeIn.Item>
