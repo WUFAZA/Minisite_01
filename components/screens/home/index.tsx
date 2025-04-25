@@ -25,15 +25,18 @@ export default function Home() {
           </p>
           <div className="flex gap-4">
             <Link href="/guides/getting-started" text="Get Started" underline />
-            <Link href="https://github.com/OmniS0FT/Minisite" text="View on GitHub" underline />
+            <Link href="https://github.com/WUFAZA" text="Link to GitHub" underline />
           </div>
         </div>
       </FadeIn.Item>
       <FadeIn.Item>
         <p>
-        Minisite offers a sleek portfolio solution for creating your personal showcase website. 
-        Built for speed and simplicity, this lightweight template remains fully adaptable to match your unique style. Ideal for creative professionals including developers seeking to display their projects. 
-        Get started by exploring the site and forking the repository.  
+        My studies in software engineering and expanding my knowledge in AI and machine learning engineering.
+Tech projects, especially those involving AI and machine learning, as well as problem-solving coding challenges.
+Advanced AI and machine learning concepts, and practical applications of these technologies.
+Software engineering, AI, and machine learning engineering.
+Anything related to tech, coding, AI, machine learning, or solving complex problems.
+I'm driven by a passion for tech and love to find solutions to problems through coding 
         </p>
       </FadeIn.Item>
       <FadeIn.Item>
