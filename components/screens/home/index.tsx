@@ -11,8 +11,8 @@ export default function Home() {
       <FadeIn.Item>
         <div className="flex justify-between">
           <div>
-            <h1>Minisite</h1>
-            <h2>Minimalist Portfolio template</h2>
+            <h1>Wunnam</h1>
+            <h2>Software Engineer</h2>
           </div>
         </div>
       </FadeIn.Item>
@@ -21,7 +21,7 @@ export default function Home() {
         <div className="rounded-lg bg-gray-2 p-6 mb-6">
           <h3 className="text-lg font-medium mb-2">Create your portfolio in minutes</h3>
           <p className="mb-4">
-            A lightweight, modern template built with Next.js and Tailwind CSS.
+            From ghana and does comp sci
           </p>
           <div className="flex gap-4">
             <Link href="/guides/getting-started" text="Get Started" underline />
