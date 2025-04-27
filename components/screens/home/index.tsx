@@ -46,12 +46,12 @@ export default function Home() {
       <FadeIn.Item>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6 mb-6">
           <div className="border border-border rounded-lg p-4">
-            <h3 className="font-medium mb-2">Machine Learning</h3>
-            <p className="text-small text-muted">Autonomous tasks and data</p>
+            <h3 className="font-medium mb-2">Intrets</h3>
+            <p className="text-small text-muted">"Passionate about software, fueled by sports, and driven by the thrill of exploring new places."</p>
           </div>
           <div className="border border-border rounded-lg p-4">
-            <h3 className="font-medium mb-2">Cloud Engineering</h3>
-            <p className="text-small text-muted">creating & troubleshooting cloud infrastructure</p>
+            <h3 className="font-medium mb-2">Skills(Level of mastery)</h3>
+            <p className="text-small text-muted">Machine Learning (Beginner), Data Visualization (Intermediate), Programming (Advanced), Database Management (Intermediate), Software Development (Intermediate), Web Development (Beginner)</p>
           </div>
         </div>
       </FadeIn.Item>
