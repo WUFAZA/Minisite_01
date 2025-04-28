@@ -1,95 +1,104 @@
 ---
-title: "Project One"
+title: "Snake App"
 author: 
-  name: "Raphael Salaja"
-  link: "https://twitter.com/raphaelsalaja"
-  handle: "raphaelsalaja"
+  name: "Faaiz Wunnam Zakaria"
 time:
   created: "2024-10-12T20:54:05.150Z"
   updated: "2024-10-17T09:56:06.854Z"
 ---
 
-# Installation
+# First-Game-App-Snake-App
+Welcome to **Snake App**, a simple yet engaging implementation of the classic Snake game. This project was created to test and enhance my skills in **object-oriented programming (OOP).**
 
-Follow these simple steps to get started:
+# Features
+- Object-oriented structure ensuring clean, modular, and reusable code.
+- Core functionalities for **player control, snake movement, and food collection**.
+- Scalable design for **future enhancements and new features**.
 
-```bash
-pnpm install
-pnpm dev
+
+# Purpose
+The primary goal was to solidify my understanding of **OOP principles**, including:
+- `Encapsulation`
+- `Inheritance`
+- `Polymorphism`
+- `Abstraction`
+
+# Technologies Used
+**Language:** [Specify programming language used, e.g., Python, Java, C++]  
+**Libraries/Frameworks:** Android SDK
+
+# Code Snippets
+
+# Snake Class - Movement and Growth
+```
+public void move() {
+    for (int i = segments.size() - 1; i > 0; i--) {
+        segments.get(i).x = segments.get(i - 1).x;
+        segments.get(i).y = segments.get(i - 1).y;
+    }
+    Segment head = segments.get(0);
+    switch (direction) {
+        case Direction.UP: head.y -= UNIT_SIZE; break;
+        case Direction.DOWN: head.y += UNIT_SIZE; break;
+        case Direction.LEFT: head.x -= UNIT_SIZE; break;
+        case Direction.RIGHT: head.x += UNIT_SIZE; break;
+    }
+}
+```
+# Food Class - Spawn Functionality
+```
+public void spawn() {
+    x = (random.nextInt(screenWidth / UNIT_SIZE)) * UNIT_SIZE;
+    y = (random.nextInt(screenHeight / UNIT_SIZE)) * UNIT_SIZE;
+}
 ```
 
-This will install the necessary dependencies and start the development server. Once the server is running, you can view your portfolio at `http://localhost:3000`.
-
-# Environment Variables
-
-The following environment variables are required to run the application:
-
-- `NEXT_PUBLIC_SITE_URL`: The URL of your website.
-
-Run the following command to create a `.env.local` file and add the required environment variables:
-
-```bash
-vercel env pull
+# GameView Class - Core Game Loop
+```
+@Override
+public void run() {
+    while (isPlaying) {
+        long startTime = System.currentTimeMillis();
+        update();
+        draw();
+        long duration = System.currentTimeMillis() - startTime;
+        long sleepTime = (1000 / FRAME_RATE) - duration;
+        if (sleepTime > 0) {
+            try {
+                Thread.sleep(sleepTime);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+}
 ```
 
-Then, update the values in the `.env.local` file with your own values.
+# MainActivity Class - Setting Up the Game View
+```
+@Override
+protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    setContentView(R.layout.activity_main);
 
-# Scripts
-
-The following scripts are available to help you manage development, build processes, and linting:
-
-`build`
-
-Runs the linting process, updates MDX file timestamps, and then builds the Next.js application for production. This ensures code quality and proper SEO metadata before deployment.
-
-```bash
-pnpm build
+    GameView gameView = new GameView(this);
+    FrameLayout gameFrame = findViewById(R.id.gameFrame);
+    gameFrame.addView(gameView);
+}
 ```
 
-`postbuild`
+# Future Enhancements
+- Add **levels with increasing difficulty**.
+- Implement **different snake skins and themes**.
+- Incorporate a **leaderboard to track high scores**.
+- Enable **multiplayer support**.
 
-Automatically generates the sitemap after the build process completes. This script uses the `next-sitemap` package to create a `sitemap.xml` file for better SEO and discoverability.
+# Contributing
+Contributions are welcome! If you have ideas or improvements, feel free to **open an issue or submit a pull request**.
 
-```bash
-pnpm postbuild
-```
+# License
+This project is shared as a **casual learning project**. Feel free to use or modify the code for **personal or educational purposes**. No formal license is applied.
 
-`mdx:timestamps`
+## Repository
 
-Runs a custom Node.js script that updates timestamps (`created` and `updated`) in your MDX files, automating the time management for blog posts.
-
-```bash
-pnpm mdx:timestamps
-```
-
-`lint:style`
-
-Runs `stylelint` on all CSS files to check and automatically fix any style issues. This ensures consistent and clean CSS code.
-
-```bash
-pnpm lint:style
-```
-
-`lint:biome`
-
-Runs the Biome linter to check and fix JavaScript/TypeScript code. This keeps your codebase clean and error-free.
-
-```bash
-pnpm lint:biome
-```
-
-`lint:prettier`
-
-Runs Prettier to format your code according to your project's style guide. This improves code readability and consistency.
-
-```bash
-pnpm lint:prettier
-```
-
-`lint`
-
-A combination of the style, Prettier, and Biome linting scripts, run together to ensure the entire codebase follows consistent style and format rules.
-
-```bash
-pnpm lint
-```
+You can check out the full project on [GitHub](https://github.com/WUFAZA/First-Game-App-Snake-App-).
