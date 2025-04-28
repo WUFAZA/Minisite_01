@@ -46,7 +46,7 @@ export default function Home() {
       <FadeIn.Item>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6 mb-6">
           <div className="border border-border rounded-lg p-4">
-            <h3 className="font-medium mb-2">Intrets</h3>
+            <h3 className="font-medium mb-2">Intrests</h3>
             <p className="text-small text-muted">"Passionate about software, fueled by sports, and driven by the thrill of exploring new places."</p>
           </div>
           <div className="border border-border rounded-lg p-4">
@@ -55,6 +55,7 @@ export default function Home() {
           </div>
         </div>
       </FadeIn.Item>
+      <p>An overview of the projects I've done recently with a component showcase of one in action</p>
       <FadeIn.Item>
         <Posts category="guides" />
       </FadeIn.Item>
