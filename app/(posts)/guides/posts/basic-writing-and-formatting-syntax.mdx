@@ -1,196 +1,159 @@
 ---
-title: "Basic Writing and Formatting Syntax"
+title: "ML Project"
 time:
   created: "2024-09-18T19:24:46.167Z"
   updated: "2024-10-17T09:56:06.854Z"
 ---
 
-> This guide is an abstraction from Github's Formatting Syntax documentation.[^1]\
-> We are using it to show the various styles that we have available.
+# Football-Rating-Predictions
+My First Machine Learning Project. Doing this project was mostly fueled for by my love for football and yearning to test out my new found knowledge
 
-# Headings
+# Football Player Rating Prediction
 
-To create a heading, add one to two <kbd>#</kbd> symbols before your heading text. The number of <kbd>#</kbd> you use will determine the hierarchy level and typeface size of the heading.
+This project predicts the ratings of football players for the upcoming year using a Linear Regression model. Linear Regression is a supervised machine learning technique ideal for regression challenges, where it predicts continuous target values based on input features.
 
-<Preview codeblock>
-  <div>
-    <h1>Heading 1</h1>
-    <div/>
-    <h2>Heading 2</h2>
-  </div>
-</Preview>
 
-```text copy
-# Heading 1
-# Heading 2
+
+# How the Code Works
+
+1. **Data Collection:**
+   - The dataset includes historical performance data of football players and their past ratings.
+   - Data is sourced from: [Football Player Dataset 2022 - CLEAN FIFA 23 Official Data](https://raw.githubusercontent.com/falaprodavi/Football-Player-Dataset2022/refs/heads/main/datasets/CLEAN_FIFA23_official_data.csv).
+
+2. **Data Preprocessing:**
+   - Key target variable: `Potential`.
+   - Features used include:
+     - `Overall`
+     - `Contract Valid Until`
+     - `Height(cm.)`
+     - `Weight(lbs.)`
+     - `Release Clause (£)`
+   - Data was split into training and testing sets and standardized for consistent scaling.
+
+3. **Model Training:**
+   - A Linear Regression model was trained on historical player data to predict potential future ratings.
+
+4. **Prediction:**
+   - The trained Linear Regression model was used to predict player ratings for test data.
+
+5. **Evaluation:**
+   - The model's performance was evaluated using:
+     - **Mean Squared Error (MSE):** To measure the variance between actual and predicted ratings.
+     - **R² Score:** To assess how well the model explains the variance in the data.
+
+
+# Example Code Snippet
+
+```python
+# Importing the necessary libraries
+import pandas as pd
+import numpy as np
+import matplotlib as plt
+
+# Loading the dataset
+df = pd.read_csv('https://raw.githubusercontent.com/falaprodavi/Football-Player-Dataset2022/refs/heads/main/datasets/CLEAN_FIFA23_official_data.csv')
+print(df.head())  # Displaying the first few rows of the dataset
+
+# Separating the target variable and features
+y = df['Potential']
+columns_to_add = ['Overall', 'Contract Valid Until', 'Height(cm.)', 'Weight(lbs.)', 'Release Clause(£)']
+x = df[columns_to_add]
+
+# Splitting the data into training and testing sets
+from sklearn.model_selection import train_test_split
+
+x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=100)
+print(x_train.head())  # Displaying the first few rows of the training features
+
+# Training the model using Linear Regression
+from sklearn.linear_model import LinearRegression
+
+lr = LinearRegression()
+lr.fit(x_train, y_train)
+
+# Testing the model
+y_old_pred = lr.predict(x_train)
+y_new_pred = lr.predict(x_test)
+
+# Evaluating the model
+from sklearn.metrics import mean_squared_error, r2_score
+
+# Calculating training performance
+lr_train_mse = mean_squared_error(y_train, y_old_pred)
+r2_score_train = r2_score(y_train, y_old_pred)
+
+# Calculating testing performance
+lr_test_mse = mean_squared_error(y_test, y_new_pred)
+r2_score_test = r2_score(y_test, y_new_pred)
+
+# Displaying evaluation results
+print("LR Train Mean Squared Error: ", lr_train_mse)
+print("LR Train R² Score: ", r2_score_train)
+print("LR Test Mean Squared Error: ", lr_test_mse)
+print("LR Test R² Score: ", r2_score_test)
 ```
 
-# Styling Text
+# Dependencies
 
-You can indicate emphasis with bold, italic, strikethrough, subscript, or superscript text in comment fields and .md files.
+The following libraries are required to run the notebook:
 
-<Preview codeblock>
-  <div>**Bold**</div>
-  <div>*Italic*</div>
-  <div>~~Strikethrough~~</div>
-  <div><sub>Subscript</sub></div>
-  <div><sup>Superscript</sup></div>
-  <div><kbd>⌘</kbd><kbd>K</kbd></div>
-</Preview>
+- numpy
+- pandas
+- scikit-learn
 
-```text
-**Bold**
-*Italic*
-~~Strikethrough~~
-<sub>Subscript</sub>
-<sup>Superscript</sup>
-<kbd>⌘</kbd><kbd>K</kbd>
+You can install these dependencies using pip:
+
+```bash
+pip install numpy pandas scikit-learn
 ```
 
-# Quoting Text
+# Data Collection
 
-You can quote text with a <kbd>></kbd>.
+The dataset used in this project was obtained from: Football Player Dataset 2022 - CLEAN FIFA 23 Official Data(https://raw.githubusercontent.com/falaprodavi/Football-Player-Dataset2022/refs/heads/main/datasets/CLEAN_FIFA23_official_data.csv).
 
-<Preview codeblock>
-  Text that is not a quote
-  > Text that is a quote
-</Preview>
-```text
-Text that is not a quote
-> Text that is a quote
-```
+It contains detailed information about football players, with features such as:
 
-# Links
+Overall, Potential, Height(cm.), Weight(lbs.), and more (see the full feature set in the dataset).
 
-You can create an inline link by wrapping link text in brackets, and then wrapping the URL in parentheses.
+# Data Preprocessing
 
-<Preview codeblock>
-  [Link](https://www.youtube.com/watch?v=dQw4w9WgXcQ)
-</Preview>
-```text
-[Link](https://www.youtube.com/watch?v=dQw4w9WgXcQ)
-```
+The data preprocessing steps include:
 
-# Lists
+Extracting the target variable Potential and selecting key features (Overall, Contract Valid Until, Height(cm.), etc.).
 
-You can make an unordered list by preceding one or more lines of text with <kbd>-</kbd>.
+Standardizing the data for consistent scaling.
 
-<Preview codeblock>
-  - George Washington
-  - John Adams
-  - Thomas Jefferson
-</Preview>
-```text
-- George Washington
-- John Adams
-- Thomas Jefferson
-```
-To order your list, precede each line with a number.
+Splitting the dataset into training and testing sets using train_test_split.
+# Model Training
 
-<Preview codeblock>
-  1. James Madison
-  2. James Monroe
-  3. John Quincy Adams
-</Preview>
-```text
-1. James Madison
-2. James Monroe
-3. John Quincy Adams
-```
+The model is trained using Linear Regression:
 
-# Footnotes
+Import the Linear Regression model from scikit-learn.
 
-You can add footnotes to your content by using this bracket syntax <kbd>`[^1]`</kbd> and then defining the footnote at the bottom of your content.
+Train it on the training data to learn patterns.
 
+Use the trained model to make predictions.
 
-<Preview codeblock>
-  <div>The invention of the printing press revolutionized the spread of information in Europe during the 15th century.[^2]</div>
+# Model Evaluation
 
-  [^2]: Johannes Gutenberg is credited with inventing the movable-type printing press around 1440 in Mainz, Germany.
-</Preview>
-```text
-The invention of the printing press revolutionized the spread of information in Europe during the 15th century.[^2].
+The model's performance is evaluated using:
 
-[^2]: Johannes Gutenberg is credited with inventing the movable-type printing press around 1440 in Mainz, Germany.
-```
+Mean Squared Error (MSE): Measures the variance between predicted and actual values.
 
-# Preview 
+R² Score: Indicates how well the model explains the data variance.
 
-You can preview your markdown content in real-time by using the preview feature in the editor. We have been using it throughout this guide to show you how your markdown content will look when rendered. It comes with a single prop, <kbd>codeblock</kbd>, that you can use to display the code block right below the preview.
+# Usage
 
-<Preview codeblock>
-  <Preview codeblock>
-   <div className="bg-gray-2 border-gray-4 border w-32 h-16 rounded"/>
-  </Preview>
-  ```tsx
-    <div className="bg-red-400 w-32 h-16 rounded"/>
-  ```
-</Preview>
-```tsx
-<Preview>
-  <div className="bg-gray-2 border-gray-4 border w-32 h-16 rounded"/>
-</Preview>
-```
+To run the project:
 
-# Inline Code
+Open Player_Rating_Prediction.ipynb in Jupyter Notebook or Google Colab.
 
-Append <kbd>`{:lang}{:js}`</kbd> (e.g. <kbd>`{:js}{:js}`</kbd>) to the end of inline code to highlight it like a regular code block.
+Install the required dependencies using pip.
 
-<Preview codeblock>
-  To useEffect or not to `useEffect(){:tsx}`, that is the question.
-</Preview>
-```text
-This is an array `[1, 2, 3]{:js}` of numbers 1 through 3.
-```
+Execute the code cells sequentially.
+# Acknowledgements
+The dataset used in this project is sourced from: FIFA 23 Official Data. Special thanks to the contributors for providing clean and detailed data.
 
+# Repository
 
-# Code Blocks
-
-To format code or text into its own distinct block, use triple backticks.
- 
-<Preview codeblock>
-```tsx
-function feature() {
-  return "It works in my environment.";
-}
-```
-</Preview>
-```text
-```tsx  
-function feature() {
-  return "It works in my environment.";
-}
-```‎
-```
-
-# Media
-
-You can embed images, videos, and other media in your markdown content. You can also add captions to your images via the <kbd>`<Image/>`</kbd> component.
-
-<Preview codeblock>
-<div className="flex flex-row gap-4">
-  <Image src='https://avatar.vercel.sh/sylph' alt='Placeholder' caption='Avatar'/>
-</div>
-</Preview>
-```text
-<Image src='https://avatar.vercel.sh/sylph' alt='Placeholder' caption='Avatar'/>
-```
-
-# Tables
-
-You can create tables by assembling a list of words and dividing them with hyphens <kbd>-</kbd> (for the first row), and then separating each column with a pipe <kbd>|</kbd>.
-
-<Preview codeblock>
-| First Header  | Second Header |
-| ------------- | ------------- |
-| Content Cell  | Content Cell  |
-| Content Cell  | Content Cell  |
-</Preview>
-```text
-| First Header  | Second Header |
-| ------------- | ------------- |
-| Content Cell  | Content Cell  |
-| Content Cell  | Content Cell  |
-```
-
-[^1]: Github, ["Basic Writing and Formatting Syntax"](https://docs.github.com/en/github/writing-on-github/basic-writing-and-formatting-syntax) Github, 2024. [Accessed: 19-Sep-2024].
+You can check out the full project on [GitHub](https://github.com/your-username/your-repo).
