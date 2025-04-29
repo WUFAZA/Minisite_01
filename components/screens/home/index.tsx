@@ -33,7 +33,7 @@ export default function Home() {
           as well as my love for problem-solving through coding.
           </p>
           <div className="flex gap-4">
-            <Link href="https://www.linkedin.com/in/wunnam-zakaria-a3904229b/" text="Link to Linkdn" underline />
+            <Link href="https://www.linkedin.com/in/wunnam-zakaria-a3904229b/" text="Link to Linkedn" underline />
             <Link href="https://github.com/WUFAZA" text="Link to GitHub" underline />
           </div>
         </div>
