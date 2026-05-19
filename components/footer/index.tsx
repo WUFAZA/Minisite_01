@@ -5,9 +5,7 @@ const Footer = () => {
   return (
     <div className="flex w-full flex-col gap-3 border-border border-t pt-4">
       <div className="flex w-full items-center justify-between">
-        <div className="px-[2px] text-muted text-small">
-          © 2026 Wunnam Zakaria. All rights reserved.
-        </div>
+        <div className="px-[2px] text-muted text-small">© 2026 Wunnam Zakaria. All rights reserved.</div>
         <div className="text-muted text-small">
           <AppThemeSwitcher />
         </div>

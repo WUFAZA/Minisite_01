@@ -38,9 +38,5 @@ function getFiles(dir: string): string[] {
 
 export function getPosts(directory: string): Post[] {
   const files = getFiles(path.join(process.cwd(), "content", directory));
-  return files
-    .map((file) =>
-      readFile(path.join(process.cwd(), "content", directory, file)),
-    )
-    .filter((post): post is Post => post !== null);
+  return files.map((file) => readFile(path.join(process.cwd(), "content", directory, file))).filter((post): post is Post => post !== null);
 }
