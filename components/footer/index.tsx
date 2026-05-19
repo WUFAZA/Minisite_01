@@ -6,15 +6,14 @@ const Footer = () => {
     <div className="flex w-full flex-col gap-3 border-border border-t pt-4">
       <div className="flex w-full items-center justify-between">
         <div className="px-[2px] text-muted text-small">
-          Developed by <Link href="https://github.com/iBz-04" text="iBz" underline />
+          © 2026 Wunnam Zakaria. All rights reserved.
         </div>
         <div className="text-muted text-small">
           <AppThemeSwitcher />
         </div>
       </div>
-      <div className="flex items-center gap-4 pb-2 text-small text-muted">
-        <Link href="https://github.com/iBz-04/Minisite" text="GitHub" underline />
-        <Link href="https://twitter.com/iBz_04" text="Twitter" underline />
+      <div className="flex items-center gap-4 pb-2 text-muted text-small">
+        <Link href="https://github.com/WUFAZA" text="GitHub" underline />
         <Link href="/guides" text="Guides" underline />
       </div>
     </div>

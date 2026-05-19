@@ -16,6 +16,10 @@ function readFile(filePath: string): Post | null {
       ...data,
       slug,
       content,
+      time: {
+        created: data.created || "",
+        updated: data.updated || "",
+      },
     } as Post;
   } catch (error) {
     console.error(`Failed to read or parse the file at ${filePath}:`, error);
@@ -33,6 +37,10 @@ function getFiles(dir: string): string[] {
 }
 
 export function getPosts(directory: string): Post[] {
-  const files = getFiles(path.join(process.cwd(), "app", "(posts)", directory, "posts"));
-  return files.map((file) => readFile(path.join(process.cwd(), "app", "(posts)", directory, "posts", file))).filter((post): post is Post => post !== null);
+  const files = getFiles(path.join(process.cwd(), "content", directory));
+  return files
+    .map((file) =>
+      readFile(path.join(process.cwd(), "content", directory, file)),
+    )
+    .filter((post): post is Post => post !== null);
 }

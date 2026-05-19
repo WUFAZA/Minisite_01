@@ -1,0 +1,73 @@
+---
+title: "Relational Online Examination and Assessment System"
+publishedAt: "2023"
+created: "2023-09-01"
+updated: "2023-12-20"
+summary: "A secure, relationally-modeled online examination platform implemented in ASP.NET Core with MSSQL and EF Core, optimized for transactional integrity and relational query performance."
+tags: ["ASP.NET Core","MSSQL","EF Core","Education"]
+---
+
+## The Engineering Challenge
+Design a web-based testing system with strict ACID guarantees, efficient relational schema for complex question/response joins, and optimized queries to serve concurrent exam sessions with minimal latency.
+
+## The Architecture & Tech Stack
+- ASP.NET Core web API for backend services.
+- Entity Framework Core as ORM with explicit relational modeling.
+- Microsoft SQL Server (MSSQL) optimized via indexing and carefully designed foreign-key relationships.
+- Role-based authentication and transactional grading.
+
+## Core Implementation Logic
+```csharp
+// Models/ExamContext.cs
+using Microsoft.EntityFrameworkCore;
+
+public class ExamContext : DbContext {
+    public DbSet<Exam> Exams { get; set; }
+    public DbSet<Question> Questions { get; set; }
+    public DbSet<Attempt> Attempts { get; set; }
+    public DbSet<Answer> Answers { get; set; }
+
+    public ExamContext(DbContextOptions<ExamContext> opts) : base(opts) {}
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder) {
+        modelBuilder.Entity<Question>().HasIndex(q => new { q.ExamId, q.Order });
+        modelBuilder.Entity<Attempt>().HasIndex(a => new { a.UserId, a.ExamId });
+        // strong FK constraints, cascade rules tuned for consistent deletes
+    }
+}
+```
+
+```csharp
+// Controllers/AttemptsController.cs
+[ApiController]
+[Route("api/[controller]")]
+public class AttemptsController : ControllerBase {
+    private readonly ExamContext _db;
+    public AttemptsController(ExamContext db) { _db = db; }
+
+    [HttpPost("{examId}/submit")]
+    public async Task<IActionResult> Submit(int examId, SubmissionDto dto) {
+        using var tx = await _db.Database.BeginTransactionAsync();
+        var attempt = new Attempt { ExamId = examId, UserId = dto.UserId, StartedAt = dto.StartedAt };
+        _db.Attempts.Add(attempt);
+        await _db.SaveChangesAsync();
+
+        foreach (var ans in dto.Answers) {
+            _db.Answers.Add(new Answer { AttemptId = attempt.Id, QuestionId = ans.QuestionId, Selected = ans.Selected });
+        }
+        await _db.SaveChangesAsync();
+        await tx.CommitAsync();
+
+        // optimized relational score aggregation
+        var score = await _db.Answers
+            .Where(a => a.AttemptId == attempt.Id)
+            .Join(_db.Questions, a => a.QuestionId, q => q.Id, (a, q) => new { a, q })
+            .SumAsync(x => x.a.Selected == x.q.CorrectOption ? x.q.Weight : 0);
+
+        return Ok(new { attemptId = attempt.Id, score });
+    }
+}
+```
+
+## System Impact & Results
+- Delivered a relational schema with query indexes and transactional submit flow, enabling robust concurrent exam sessions with reliable grading and optimized relational joins.

@@ -1,0 +1,62 @@
+---
+title: "DSP Audio Noise Reduction System"
+publishedAt: "2024"
+created: "2024-04-01"
+updated: "2024-05-10"
+summary: "A signal-processing pipeline applying FFT-based noise estimation and Butterworth filter design to reduce background noise and improve SNR in digital audio streams."
+tags: ["DSP","Python","Signal Processing","FFT"]
+---
+
+## The Engineering Challenge
+Isolate and remove stationary and quasi-stationary background noise from recorded audio while preserving speech quality. Required robust spectral estimation and stable filter design for low-latency processing.
+
+## The Architecture & Tech Stack
+- Python (NumPy, SciPy) for signal processing primitives.
+- Fourier Transforms (np.fft) for spectral analysis and spectral subtraction.
+- Butterworth IIR filter design from `scipy.signal` for frequency-domain cleaning.
+- Optional real-time hooks for streaming audio input.
+
+## Core Implementation Logic
+```python
+# dsp/noise_reduction.py
+import numpy as np
+from scipy.signal import butter, lfilter, sosfilt
+from scipy.fft import rfft, irfft
+
+def design_butterworth(lowcut, highcut, fs, order=4):
+    nyq = 0.5 * fs
+    low = lowcut / nyq
+    high = highcut / nyq
+    sos = butter(order, [low, high], btype='band', output='sos')
+    return sos
+
+def apply_filter(sos, audio):
+    return sosfilt(sos, audio)
+
+def spectral_subtract(audio, fs, noise_frames=6, n_fft=2048, hop=512):
+    # estimate noise spectrum from initial frames
+    frames = []
+    for i in range(noise_frames):
+        start = i * hop
+        frames.append(audio[start:start+n_fft])
+    noise_spec = np.mean(np.abs(rfft(np.stack(frames, axis=0), axis=1)), axis=0)
+
+    audio_spec = rfft(audio, n=n_fft)
+    magnitude = np.abs(audio_spec)
+    phase = np.angle(audio_spec)
+
+    clean_mag = np.maximum(magnitude - noise_spec, 1e-8)
+    clean_spec = clean_mag * np.exp(1j * phase)
+    clean = irfft(clean_spec)
+    return clean
+
+# end-to-end example
+def reduce_noise(audio, fs):
+    sos = design_butterworth(80, 8000, fs, order=4)
+    filtered = apply_filter(sos, audio)
+    denoised = spectral_subtract(filtered, fs)
+    return denoised
+```
+
+## System Impact & Results
+- Applied Butterworth filter and spectral subtraction to reduce background noise while preserving signal fidelity, delivering measurable improvements in SNR on test recordings.

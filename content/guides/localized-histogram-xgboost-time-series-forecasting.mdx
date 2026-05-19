@@ -1,0 +1,53 @@
+---
+title: "Localized Histogram XGBoost for Sparse Time-Series Traffic Forecasting"
+publishedAt: "2024"
+created: "2024-02-01"
+updated: "2024-12-15"
+summary: "A research-grade traffic forecasting pipeline using localized histogram features and XGBoost to handle sparse/non-continuous junction counts with state-of-the-art accuracy."
+tags: ["XGBoost","Time-Series","Research","Python"]
+---
+
+## The Engineering Challenge
+Forecast vehicle counts from sparse, non-continuous sensors at four independent junctions in a city. Challenges included irregular sampling, missing intervals, and strong local spatial heterogeneity between junctions.
+
+## The Architecture & Tech Stack
+- Python data stack: pandas, NumPy, scikit-learn for preprocessing.
+- XGBoost for gradient-boosted regression.
+- Localized histogram feature extraction across temporal windows.
+- Standardized evaluation using MAE and R²; bench-marked against GRU/LSTM baselines.
+
+## Core Implementation Logic
+```python
+# ml/local_hist_xgb.py
+import numpy as np
+import pandas as pd
+import xgboost as xgb
+from sklearn.metrics import mean_absolute_error, r2_score
+from sklearn.model_selection import train_test_split
+
+def localized_histogram_features(series: pd.Series, window:int=12, bins:int=10):
+    X = []
+    y = []
+    for i in range(window, len(series)):
+        window_slice = series.iloc[i-window:i].dropna()
+        if window_slice.empty:
+            continue
+        hist, _ = np.histogram(window_slice.values, bins=bins, density=True)
+        features = np.concatenate([hist, [window_slice.mean(), window_slice.std()]])
+        X.append(features)
+        y.append(series.iloc[i])
+    return np.array(X), np.array(y)
+
+# Example training flow for a single junction
+def train_xgboost_for_junction(counts: pd.Series):
+    X, y = localized_histogram_features(counts, window=12, bins=16)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    model = xgb.XGBRegressor(n_estimators=300, learning_rate=0.05, max_depth=6, objective="reg:squarederror")
+    model.fit(X_train, y_train, eval_set=[(X_test, y_test)], early_stopping_rounds=20, verbose=False)
+    preds = model.predict(X_test)
+    return model, mean_absolute_error(y_test, preds), r2_score(y_test, preds)
+```
+
+## System Impact & Results
+- Achieved MAE as low as 1.85 and R² up to 94.66% across junctions.
+- Outperformed GRU/LSTM baselines on sparse, discontinuous sampling scenarios in the published comparisons.

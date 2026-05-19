@@ -1,0 +1,80 @@
+---
+title: "Hybrid C + Assembly Cache Simulator"
+publishedAt: "2023"
+created: "2023-03-01"
+updated: "2023-06-10"
+summary: "A trace-driven CPU cache simulator combining C for simulator orchestration and x86-64 assembly for bit-level address handling and micro-ops emulation."
+tags: ["C","Assembly","Cache","Systems"]
+---
+
+## The Engineering Challenge
+Evaluate cache policies and memory hierarchy efficiency by replaying address traces at high throughput. The solution required cycle-accurate indexing, fast bitwise tag/set extraction, and low-overhead replacement policy emulation.
+
+## The Architecture & Tech Stack
+- High-performance C for the simulator core and trace IO.
+- x86-64 assembly for hot-path bitwise manipulations and micro-optimizations.
+- LRU / pseudo-LRU cache policy implementations with parameterizable associativity and line size.
+
+## Core Implementation Logic
+```c
+// sim/cache_sim.c
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+#define LINE_SIZE 64
+#define SETS 1024
+#define WAYS 8
+#define OFFSET_BITS 6
+#define INDEX_BITS 10  // log2(SETS)
+
+typedef struct {
+    uint64_t tag;
+    uint8_t valid;
+    uint64_t last_access; // for LRU
+} cache_line_t;
+
+static cache_line_t cache[SETS][WAYS];
+
+static inline uint64_t addr_to_tag(uint64_t addr) {
+    return addr >> (OFFSET_BITS + INDEX_BITS);
+}
+
+static inline uint32_t addr_to_index(uint64_t addr) {
+    // extract index by shifting and masking
+    return (addr >> OFFSET_BITS) & ((1u << INDEX_BITS) - 1);
+}
+
+void access_address(uint64_t addr, uint64_t cycle) {
+    uint32_t idx = addr_to_index(addr);
+    uint64_t tag = addr_to_tag(addr);
+    for (int w = 0; w < WAYS; ++w) {
+        if (cache[idx][w].valid && cache[idx][w].tag == tag) {
+            cache[idx][w].last_access = cycle;
+            return; // hit
+        }
+    }
+    // miss: evict LRU
+    int evict = 0;
+    uint64_t oldest = UINT64_MAX;
+    for (int w = 0; w < WAYS; ++w) {
+        if (!cache[idx][w].valid) { evict = w; break; }
+        if (cache[idx][w].last_access < oldest) { oldest = cache[idx][w].last_access; evict = w; }
+    }
+    cache[idx][evict].valid = 1;
+    cache[idx][evict].tag = tag;
+    cache[idx][evict].last_access = cycle;
+}
+```
+
+Assembly-accelerated helper (GCC inline asm) for bit-popcount or warp operations used in analysis:
+```c
+static inline int fast_popcount64(uint64_t x) {
+    int r;
+    __asm__("popcnt %1, %0" : "=r"(r) : "r"(x));
+    return r;
+}
+```
+
+## System Impact & Results
+- Trace-driven experiments enabled rapid evaluation of different associativities and line sizes; informative microbenchmarks used to guide memory subsystem design and cache policy tuning.

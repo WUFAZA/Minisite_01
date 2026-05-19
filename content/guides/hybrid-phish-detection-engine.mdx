@@ -1,0 +1,79 @@
+---
+title: "Hybrid Phish Detection Engine"
+publishedAt: "2025"
+created: "2025-08-01"
+updated: "2025-09-15"
+summary: "A multi-tiered phishing detection pipeline combining real-time HTML scraping, feature extraction, and a Decision Tree classifier with a production FastAPI service."
+tags: ["FastAPI","PostgreSQL","Machine Learning","Security"]
+---
+
+## The Engineering Challenge
+The project targeted real-world phishing vectors observed on live domains. Key goals were near-real-time detection of malicious HTML signatures, minimizing false positives for high-traffic endpoints, and persisting detection metadata in a scalable cloud Postgres instance while maintaining sub-second query latencies.
+
+## The Architecture & Tech Stack
+- FastAPI (async) service for ingestion and detection.
+- httpx + BeautifulSoup4 for resilient HTML scraping and parsing.
+- scikit-learn DecisionTree pipeline for deterministic classification.
+- SQLAlchemy (async) + PostgreSQL (Neon Cloud) for storage and low-latency lookups.
+- joblib for model serialization, Prometheus-compatible metrics endpoints.
+
+## Core Implementation Logic
+```python
+# app/api/detect.py
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel, AnyUrl
+import httpx
+from bs4 import BeautifulSoup
+import joblib
+import asyncio
+from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
+from sqlalchemy.orm import sessionmaker
+from app.db.models import DetectionRecord  # SQLAlchemy model
+from app.features import extract_html_features  # deterministic feature extractor
+from sklearn.exceptions import NotFittedError
+
+app = FastAPI()
+model = joblib.load("models/phish_decision_tree.joblib")  # trained DecisionTree pipeline
+engine = create_async_engine("postgresql+asyncpg://user:pass@neon-db-host/dbname", pool_size=20)
+AsyncSessionLocal = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
+
+class URLCheck(BaseModel):
+    url: AnyUrl
+    source: str | None = "api"
+
+@app.post("/v1/detect")
+async def detect(payload: URLCheck):
+    async with httpx.AsyncClient(timeout=10.0, follow_redirects=True) as client:
+        try:
+            resp = await client.get(payload.url)
+        except httpx.HTTPError as e:
+            raise HTTPException(status_code=502, detail="upstream fetch failed")
+
+    soup = BeautifulSoup(resp.text, "lxml")
+    features = extract_html_features(soup, resp.url)  # returns deterministic feature vector
+    try:
+        proba = model.predict_proba([features])[0, 1]
+        label = int(model.predict([features])[0])
+    except NotFittedError:
+        raise HTTPException(status_code=500, detail="model not available")
+
+    record = DetectionRecord(
+        url=str(payload.url),
+        source=payload.source,
+        score=float(proba),
+        label=label
+    )
+
+    async with AsyncSessionLocal() as session:
+        async with session.begin():
+            session.add(record)
+        await session.commit()
+
+    return {"url": payload.url, "phish_score": proba, "is_phish": bool(label)}
+```
+
+Notes: `extract_html_features` implements deterministic heuristics: domain age checks, form action mismatches, meta redirection, obfuscated JS detection, and Tranco-ranked domain comparisons (Tranco list integrated in the enrichment step).
+
+## System Impact & Results
+- Detection accuracy recorded at 92% on a test set of live-captured phishing pages during the NITA internship (Aug–Sept 2025).
+- Production DB schema and async query pipeline reduced detection lookup latency to sub-second responses under load.
